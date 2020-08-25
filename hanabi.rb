@@ -3,7 +3,7 @@ chars = ' ▘▝▀▖▌▞▛▗▚▐▜▄▙▟█'
 srand 0
 
 width = 160
-height = 96
+height = 80
 canvas = height.times.map { [0] * width }
 
 show = lambda do
@@ -21,8 +21,8 @@ clear = lambda do
   end
 end
 
-gravity = 1
-wind = 0.2
+gravity = 1.0
+wind = 0.4
 scale = 4.0
 stroke = lambda do |x, y, vx, vy, ax, ay, time|
   vmax = [vx, vx + ax * time, 2 * vy, (vy + ay * time) / 2].map(&:abs).max
@@ -60,25 +60,34 @@ end
 
 sparks = []
 
-(1..).each do |ti|
+(0..).each do |i|
   clear.call
-  r = 0.12
-  cx = 0.1 * Math.sin(ti * 0.07)
-  cy = 0.1 * Math.sin(ti * 0.13)
-  ir = ((2 * r+cx.abs) / scale * width).ceil
-  (-ir..ir).each do |ix|
-    (-ir/2..ir/2).each do |iy|
+  dt = 0.5
+  n = 200
+  m = 40
+  ti = i % (n+m)
+  r = 0.12*[ti*0.05,1].min
+  ay = -[ti.fdiv(n), 1, [(3*n+2*m-3.0*ti)/m,0].max].min
+  ax = -ay*0.1
+  cx = ax
+  cy = ay + (ti > n ? gravity * (dt * (ti - n)) ** 2 / 2 : 0)
+  ir = (2 * r / scale * width).ceil
+  iy = (cy / scale * width / 2).ceil
+  (iy-ir/2...[iy+ir/2,height/2].min).each do |iy|
+    (-ir..ir).each do |ix|
       x = ix * scale / width
       y = 2.0 * iy * scale / width
       a=0.1*(Math.sin(4*x+5*y+ti)+Math.sin(-5*x+3*y+ti))
-      canvas[height/2+iy][width/2+ix]=1 if (x-cx)**2+(y-cy)**2+r*r*a<r**2
+      canvas[height/2+iy][width/2+ix]=1 if ((x-cx)/r)**2+(y-cy).fdiv(r)**2+a<1
     end
   end
-  stroke.call(cx,0,0,-1,0.05,0, scale * height / width)
-  dt = 0.5
-  rand(2..12).times do
-    sparks << [*(cx+cy.i + 0.1 * 536**rand.i).rect, *((0.5 + rand) * 536**rand.i).rect, 2 * rand, new_split_time.call] if rand < dt
-  end
+  ytop = -scale * height / width
+  stroke.call(-ytop*0.1, ytop, -0.1,1,0,0, ay-ytop-r/2)
+  rand(2..8).times do
+    next if rand > (n-ti).fdiv(n)*2
+    a = [0.2+ti*0.05,1].min
+    sparks << [*(cx+cy.i).rect, *((1-a)*(-0.1+1.i) + a * (0.5 + rand) * 536**rand.i).rect, 2 * rand, (1-a)+new_split_time.call] if rand < 2*dt
+  end if ti < n
   sparks = sparks.flat_map do |s|
     spark.call(*s, dt)
   end
