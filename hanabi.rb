@@ -21,8 +21,8 @@ clear = lambda do
   end
 end
 
-gravity = 1.0
-wind = 0.4
+gravity = 0.5
+wind = 0.1
 scale = 4.0
 stroke = lambda do |x, y, vx, vy, ax, ay, time|
   vmax = [vx, vx + ax * time, 2 * vy, (vy + ay * time) / 2].map(&:abs).max
@@ -37,7 +37,7 @@ stroke = lambda do |x, y, vx, vy, ax, ay, time|
   end
 end
 
-new_split_time = -> { 0.4 + 0.9 * rand }
+new_split_time = -> { 0.5 + rand }
 spark = lambda do |x, y, vx, vy, life, split_time, time|
   dt = [time, life, split_time].min
   stroke.call x, y, vx, vy, wind, gravity, dt
@@ -52,8 +52,8 @@ spark = lambda do |x, y, vx, vy, life, split_time, time|
   else
     n = rand(5..10)
     n.times.map do
-      v = (1 + rand) * 536 ** rand.i
-      spark.call x, y, vx + v.real, vy + v.imag, (life - dt) / 4 + 0.2 * rand, new_split_time.call, time - dt
+      v = (0.5 + 0.4*rand) * 536 ** rand.i
+      spark.call x, y, vx + v.real, vy + v.imag, (life - dt) / 2 + 0.4 * rand, new_split_time.call, time - dt
     end.inject(:+)
   end
 end
@@ -62,7 +62,7 @@ sparks = []
 
 (0..).each do |i|
   clear.call
-  dt = 0.5
+  dt = 1.0
   n = 200
   m = 40
   ti = i % (n+m)
@@ -86,7 +86,7 @@ sparks = []
   rand(2..8).times do
     next if rand > (n-ti).fdiv(n)*2
     a = [0.2+ti*0.05,1].min
-    sparks << [*(cx+cy.i).rect, *((1-a)*(-0.1+1.i) + a * (0.5 + rand) * 536**rand.i).rect, 2 * rand, (1-a)+new_split_time.call] if rand < 2*dt
+    sparks << [*(cx+cy.i).rect, *((1-a)*(-0.05+0.5.i) + a * (0.5 + 0.5*rand) * 536**rand.i).rect, 1 + rand, (1-a)+new_split_time.call]
   end if ti < n
   sparks = sparks.flat_map do |s|
     spark.call(*s, dt)
