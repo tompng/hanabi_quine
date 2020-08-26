@@ -40,9 +40,10 @@ def mod_g(data)
   end
   data
 end
+
 data = ('hello world' * 100).chars.take(SIZE - FIXES).map { _1.upcase.ord-32 }
 encoded = mod_g([0] * FIXES + data) + data
-
+encoded_string = encoded.map { (32+_1).chr.downcase }.join
 p encoded, encoded.map { (32+_1).chr.downcase }.join
 num_errors = FIXES - 0
 error_indices = (0...SIZE).to_a.sample(num_errors)
@@ -87,3 +88,9 @@ end
 end
 
 p ss
+
+masked = encoded_string.dup.tap do |s|
+  error_indices.each { s[_1] = '█' }
+end
+p :INPUTS
+p FIXES, masked, G
