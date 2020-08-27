@@ -1,7 +1,7 @@
-$h ||= '0xc0'+'-'*86+$/;
+$h ||= '0xc0'+'-'*79; ti=0
 $z ||= (['-'*10+'*'*80+'-'*10] * 39).join($/).lines;
 
-$h = ';+eval($h=%(' + $h + '))[%' << 96;
+$h = ';+eval($h=%(' + $h + '))[%' << 96 << $/;
 
 chs = 32.chr;
 15.times{ chs += (9600+0x23f92721abefccb03b8[_1*5,5]).chr 'utf-8' };
@@ -20,7 +20,9 @@ stroke = -> p, v, a, t {
     canvas[y][x] = 1
   }
 };
-
+esc = 27.chr;
+eval's'.upcase+'ignal.trap(%('+'int'.upcase+')){exit}';
+$><<['%;','[h','[j'].join(esc).upcase;
 spark, *sparks = -> p, v, lt, st, tt {
   stroke[p, v, g, t = [tt, lt, st].min];
   p+=v*t+g*t*t/2;
@@ -66,12 +68,13 @@ loop {
   };
   sparks = sparks.flat_map{spark[*_1,1]};
   sp = 32.chr;
-  puts '' << 27 << '[' << 72 << $h.sub(/0x../,'0x%02x'%ti)<<$/<< (0...width / 4 - 1).map {|j|
+  e=$i?esc+'['<<72:'';
+  puts (($i?esc+'['<<72:'')+$h.sub(/0x../,'0x%02x'%ti) + (0...width / 4 - 1).map {|j|
       a = sp * 10 + (0...width / 2).map { |i|
         chs[4.times.sum {|k| canvas[2*j+k/2][2*i+k%2]<<k }]
       } * '' + sp * 10;
       (0..99).map { (a[_1] == sp) ? $z[j][_1] : a[_1] } * ''
-    } * $/
-  ;
-  sleep(0.1)
+    } * $/ + ($i?'':0.chr)
+  );
+  $i=sleep(0.1)
 }
