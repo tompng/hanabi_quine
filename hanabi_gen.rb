@@ -12,21 +12,17 @@ p (hanabi_code.chars-(32...32+64).map(&:chr)).uniq.sort.join
 
 # $h='eval(a=%('+a;
 header = <<~HEADER_CODE
-  eval($h=%(0x00;->z{$z=(41.chr*2+'[$z=++%`'+$z).lines;eval((';'*10+z+';;').scan(/^.{10}|.{10}$/)*'')}
-  ))[$z=++%`
+  ;+eval($h=%(ti=0x00;->z{$z=z.lines[1..];$z[-1]+='`]';eval((z+';;').scan(/^.{10}|.{10}$/).join)}))[%`
 HEADER_CODE
-
-
 
 side_code = rs_code + ';' + expand_code
 p side_code.size, 39 * 22
 
 
-
 puts header
 
-eval header + ';;;;;;;;;;;;;;;;[]`]'
-puts $h
+eval header + ';;;;;;;;;;;;;;;;123`]'
+puts $hanabi
 puts $z
 
 
@@ -51,7 +47,6 @@ outs = []
 eval_code = "eval$z[0,#{39-12}].map{_1[10,80].split}*''"
 side_code_chars = [rs_code, expand_code, eval_code].join(';').chars
 zwas = innercode.map{'▄'*10+_1+'▄'*10}
-zwas[0]=header.lines[1].strip+zwas[0][10..]
 zwas[-1][-2,2] = '`]'
 zwas=zwas.map { _1.gsub(/▄/) { side_code_chars.shift || ';' } }.join("\n").lines
 $z = zwas.map(&:dup)
@@ -68,7 +63,7 @@ restored = eval rs_code+';'+expand_code
 # eval_code = "eval($z.map{_1[10,80].delete(32.chr)}.take(39-12)*'')"
 # eval [rs_code, expand_code, eval_code].join(';')
 puts
-# puts $z
+puts $z
 puts zwas == $z
-File.write 'output.rb', header.lines[0] + zwas.join
+File.write 'output.rb', header + zwas.join
 # binding.irb
