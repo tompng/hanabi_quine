@@ -1,11 +1,11 @@
 INPUT = "m██q2)&6'nn█3█f█7███he█████or██h█llo█wor█d█e█lo wo"
 ANSWER = "m_:q2)&6'nn43nfx7_wghello worldhello worldhello wo"
 # SOLVER
-rs = ->s,b=[1],*c{
+rs = ->s,b=[1],*bi{
   63.times { |i|
     j = b[i] << 1;
     j > 63 && j ^= 67;
-    c[b[i + 1] = j] = 62 - i
+    bi[b[i + 1] = j] = 62 - i
   };
 
   ml = ->i, j, k=0{
@@ -27,7 +27,7 @@ rs = ->s,b=[1],*c{
   };
 
   (n - 1).times { |i|
-    k = b[c[m[i][i]]];
+    k = b[bi[m[i][i]]];
     (l = i+1...n).each { |j|
       a = ml[m[j][i], k];
       l.each { m[j][_1] ^= ml[a, m[i][_1]] };
@@ -36,7 +36,7 @@ rs = ->s,b=[1],*c{
   };
 
   (n - 1).downto(0) { |i|
-    j = b[c[m[i][i]]];
+    j = b[bi[m[i][i]]];
     i.times {
       k = ml[m[_1][i], j];
       v[_1] ^= ml[v[i], k]
