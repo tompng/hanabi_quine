@@ -9,7 +9,7 @@ width = 40*4;
 canvas = (width / 2).times.map { [0] * width };
 g = 0.5i;
 scale = 4.0;
-stroke = -> p, v, a, t {
+line = -> p, v, a, t {
   v2 = v + a * t;
   n = (width * ((v+v.real).rect+(v2+v2.real).rect).map(&:abs).max * t / scale / 2 + 1).ceil;
   n.times {
@@ -22,9 +22,9 @@ stroke = -> p, v, a, t {
 };
 esc = 27.chr;
 eval's'.upcase+'ignal.trap(%('+'int'.upcase+')){exit}';
-$><<['%;','[h','[j'].join(esc).upcase;
+$><<(['%;','[h','[j']*esc).upcase;
 spark, *sparks = -> p, v, lt, st, tt {
-  stroke[p, v, g, t = [tt, lt, st].min];
+  line[p, v, g, t = [tt, lt, st].min];
   p+=v*t+g*t*t/2;
   v+=g*t;
   (t == lt)?
@@ -56,7 +56,7 @@ loop {
     }
   };
   [-1,1].map {
-    stroke[
+    line[
       (bt+r/2)*d - 0.02 * _1,
       d - t*(1-t) / 2,
       0,
@@ -77,4 +77,4 @@ loop {
     } * $/ + ($i?'':0.chr)
   );
   $i=sleep(0.1)
-}
+};senkouhanabiby@tompng

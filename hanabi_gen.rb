@@ -8,7 +8,7 @@ p hanabi_code.size
 p ((32...127).map(&:chr)-hanabi_code.chars).join
 p (hanabi_code.chars-(32...32+64).map(&:chr)).uniq.sort.join
 
-# frame 46
+# frame 17 or 46
 
 header = <<~HEADER_CODE
   ;+eval($h=%(ti=0x00;->z{$z=z.lines[1..];$z[-1]+='`]';eval((z+';;').scan(/^.{10}|.{10}$/).join)}))[%`
@@ -33,7 +33,14 @@ def coord(i, j)
   (i+j*29)%80
 end
 
-innercode = (hanabi_code+';'+' '*10000).chars.each_slice(80).take(39-FIXES).map(&:join)+(['-'*80]*FIXES).map(&:dup)
+hanabi_chars = hanabi_code.chars+[';']*1000
+template = File.read('./template.txt').lines
+innercode = (39-FIXES).times.map do |y|
+  80.times.map do |x|
+    (template[y]||'')[x] == '#' ? ' ' : hanabi_chars.shift
+  end.join
+end + (['-'*80]*FIXES).map(&:dup)
+# innercode = (hanabi_code+';'+' '*10000).chars.each_slice(80).take(39-FIXES).map(&:join)+(['-'*80]*FIXES).map(&:dup)
 p spaces: innercode.join.count(' ')
 
 outs = []
