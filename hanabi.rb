@@ -1,10 +1,11 @@
-$h ||= '-'*100+$/;
-$z ||= (['-'*10+'*'*80+'-'*10] * 47).join($/).lines;
+$h ||= '0xc0'+'-'*86+$/;
+$z ||= (['-'*10+'*'*80+'-'*10] * 39).join($/).lines;
 
+ti=($h.to_i(16) - 1) & 255;
 $h = 'eval($h=%(' + $h;
 
-charactors = 32.chr;
-15.times{ charactors += (9600+0x23f92721abefccb03b8[_1*5,5]).chr 'utf-8' };
+chs = 32.chr;
+15.times{ chs += (9600+0x23f92721abefccb03b8[_1*5,5]).chr 'utf-8' };
 width = 40*4;
 canvas = (width / 2).times.map { [0] * width };
 g = 0.5i;
@@ -35,11 +36,11 @@ spark, *sparks = -> p, v, lt, st, tt {
     }
 };
 
-(0..).each {|i|
+loop {
+  ti = (ti + 1) & 255;
   canvas.map { |l| width.times { l[_1] = 0 } };
-  stp = 200;
-  ti = i % (stp + m = 40);
-  ti==0&&srand(0);
+  stp = 255 - m = 40;
+  srand(ti);
   t=[0,(3*stp+2*m-3.0*ti)/m,1].sort[1];
   d=0.1-1i;
   bt = [ti.fdiv(stp),t*t*(3-2*t)].min;
@@ -53,15 +54,22 @@ spark, *sparks = -> p, v, lt, st, tt {
       canvas[width/4+y][width/2+x]=1 if (p-c).abs<r
     }
   };
-  [-1,1].map{stroke[d*scale/2-0.02*_1,-d,0,scale/2-bt-r/2]};
+  [-1,1].map {
+    stroke[
+      (bt+r/2)*d - 0.02 * _1,
+      d - t*(1-t) / 2,
+      0,
+      scale/2-bt
+    ]
+  };
   rand(2..8).times {
     sparks << [c,-d*(1-a=[0.2+ti*0.05,1].min)/2 + a * 0.5 * (1 + rand) * 536**rand.i, 1 + 2 * rand, (1-a)+0.5+rand] if (rand < 2.0*(stp-ti)/stp)
   };
   sparks = sparks.flat_map{spark[*_1,1]};
   sp = 32.chr;
-  puts '' << 27 << '[1;1' << 72 << $h << (0...width / 4 - 1).map {|j|
+  puts '' << 27 << '[1;1' << 72 << $h.sub(/0x../,'0x%02x'%ti) << (0...width / 4 - 1).map {|j|
       a = sp * 10 + (0...width / 2).map { |i|
-        charactors[4.times.sum {|k| canvas[2*j+k/2][2*i+k%2]<<k }]
+        chs[4.times.sum {|k| canvas[2*j+k/2][2*i+k%2]<<k }]
       } * '' + sp * 10;
       (0..99).map { (a[_1] == sp) ? $z[j][_1] : a[_1] } * ''
     } * $/ + 96.chr+']'

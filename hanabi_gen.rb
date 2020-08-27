@@ -12,7 +12,7 @@ p (hanabi_code.chars-(32...32+64).map(&:chr)).uniq.sort.join
 
 # $h='eval(a=%('+a;
 header = <<~HEADER_CODE
-  eval($h=%(0x00;->z{$z=(41.chr*2+'[$z=++%`'+$z).lines;eval((?;*10+z+';;').scan(/^.{10}|.{10}$/)*'')}
+  eval($h=%(0x00;->z{$z=(41.chr*2+'[$z=++%`'+$z).lines;eval((';'*10+z+';;').scan(/^.{10}|.{10}$/)*'')}
   ))[$z=++%`
 HEADER_CODE
 
@@ -38,7 +38,9 @@ def coord(i, j)
   (i+j*9)%80
 end
 
-innercode = (hanabi_code+';'+10000.times.map{rand(10)}.join).chars.each_slice(80).take(39-12).map(&:join)+(['-'*80]*12).map(&:dup)
+innercode = (hanabi_code+';'+' '*10000).chars.each_slice(80).take(39-12).map(&:join)+(['-'*80]*12).map(&:dup)
+p spaces: innercode.join.count(' ')
+
 outs = []
 80.times { |i|
   s = (0...39).map { innercode[39-1-_1][coord(i, _1)] } * ''
