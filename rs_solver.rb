@@ -1,12 +1,11 @@
 INPUT = "m██q2)&6'nn█3█f█7███he█████or██h█llo█wor█d█e█lo wo"
 ANSWER = "m_:q2)&6'nn43nfx7_wghello worldhello worldhello wo"
 # SOLVER
-rs = ->s,*ian{
-  an = [1];
+rs = ->s,b=[1],*c{
   63.times { |i|
-    j = an[i] * 2;
+    j = b[i] << 1;
     j > 63 && j ^= 67;
-    ian[an[i + 1] = j] = 62 - i
+    c[b[i + 1] = j] = 62 - i
   };
 
   ml = ->i, j, k=0{
@@ -15,20 +14,20 @@ rs = ->s,*ian{
     k
   };
 
-  idx = [];
+  ix = [];
   cd = s.chars.map.with_index {
-    _1.ord < 127 ? _1.upcase.ord - 32 : (idx << _2; 0)
+    _1.ord < 127 ? _1.upcase.ord - 32 : (ix << _2; 0)
   };
   ss = [];
-  m = (0...n = idx.size).map { |i|
+  m = (0...n = ix.size).map { |i|
     j = 0;
-    cd.each_with_index { j ^= ml[_1, an[i * _2 % 63]] };
+    cd.each_with_index { j ^= ml[_1, b[i * _2 % 63]] };
     ss << j;
-    idx.map { an[i * _1 % 63] }
+    ix.map { b[i * _1 % 63] }
   };
 
   (n - 1).times { |i|
-    k = an[ian[m[i][i]]];
+    k = b[c[m[i][i]]];
     (l = i+1...n).each { |j|
       a = ml[m[j][i], k];
       l.each { m[j][_1] ^= ml[a, m[i][_1]] };
@@ -37,14 +36,14 @@ rs = ->s,*ian{
   };
 
   (n - 1).downto(0) { |i|
-    j = an[ian[m[i][i]]];
+    j = b[c[m[i][i]]];
     i.times {
       k = ml[m[_1][i], j];
       ss[_1] ^= ml[ss[i], k]
     };
     ss[i] = ml[ss[i], j]
   };
-  ss.zip(idx){s[_2]=(_1+32).chr.downcase}
+  ss.zip(ix){s[_2]=(_1+32).chr.downcase}
 }
 # TEST
 output = INPUT.dup
