@@ -1,9 +1,11 @@
-$h ||= '-'*114+$/;
-$z ||= (['-'*9+'*'*96+'-'*9] * 47).join($/).lines;
+$h ||= '-'*100+$/;
+$z ||= (['-'*10+'*'*80+'-'*10] * 47).join($/).lines;
+
+$h = 'eval($h=%(' + $h;
 
 charactors = 32.chr;
 15.times{ charactors += (9600+0x23f92721abefccb03b8[_1*5,5]).chr 'utf-8' };
-width = 48*4;
+width = 40*4;
 canvas = (width / 2).times.map { [0] * width };
 g = 0.5i;
 scale = 4.0;
@@ -58,10 +60,10 @@ spark, *sparks = -> p, v, lt, st, tt {
   sparks = sparks.flat_map{spark[*_1,1]};
   sp = 32.chr;
   puts '' << 27 << '[1;1' << 72 << $h << (0...width / 4 - 1).map {|j|
-      a = sp * 9 + (0...width / 2).map { |i|
+      a = sp * 10 + (0...width / 2).map { |i|
         charactors[4.times.sum {|k| canvas[2*j+k/2][2*i+k%2]<<k }]
-      } * '' + sp * 9;
-      (0..113).map { (a[_1] == sp) ? $z[j][_1] : a[_1] } * ''
+      } * '' + sp * 10;
+      (0..99).map { (a[_1] == sp) ? $z[j][_1] : a[_1] } * ''
     } * $/ + 96.chr+']'
   ;
   sleep(0.1)

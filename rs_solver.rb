@@ -18,11 +18,11 @@ rs = ->s,b=[1],*c{
   cd = s.chars.map.with_index {
     _1.ord < 127 ? _1.upcase.ord - 32 : (ix << _2; 0)
   };
-  ss = [];
+  v = [];
   m = (0...n = ix.size).map { |i|
     j = 0;
     cd.each_with_index { j ^= ml[_1, b[i * _2 % 63]] };
-    ss << j;
+    v << j;
     ix.map { b[i * _1 % 63] }
   };
 
@@ -31,7 +31,7 @@ rs = ->s,b=[1],*c{
     (l = i+1...n).each { |j|
       a = ml[m[j][i], k];
       l.each { m[j][_1] ^= ml[a, m[i][_1]] };
-      ss[j] ^= ml[a, ss[i]]
+      v[j] ^= ml[a, v[i]]
     }
   };
 
@@ -39,11 +39,11 @@ rs = ->s,b=[1],*c{
     j = b[c[m[i][i]]];
     i.times {
       k = ml[m[_1][i], j];
-      ss[_1] ^= ml[ss[i], k]
+      v[_1] ^= ml[v[i], k]
     };
-    ss[i] = ml[ss[i], j]
+    v[i] = ml[v[i], j]
   };
-  ss.zip(ix){s[_2]=(_1+32).chr.downcase}
+  v.zip(ix){s[_2]=(_1+32).chr.downcase}
 }
 # TEST
 output = INPUT.dup
