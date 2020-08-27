@@ -8,9 +8,8 @@ p hanabi_code.size
 p ((32...127).map(&:chr)-hanabi_code.chars).join
 p (hanabi_code.chars-(32...32+64).map(&:chr)).uniq.sort.join
 
+# frame 46
 
-
-# $h='eval(a=%('+a;
 header = <<~HEADER_CODE
   ;+eval($h=%(ti=0x00;->z{$z=z.lines[1..];$z[-1]+='`]';eval((z+';;').scan(/^.{10}|.{10}$/).join)}))[%`
 HEADER_CODE
@@ -26,42 +25,37 @@ puts $hanabi
 puts $z
 
 
-rsobj = ReedSolomon.new 12
 
 
-OFFSET = 12
+FIXES = 12
+rsobj = ReedSolomon.new FIXES
 def coord(i, j)
-  (i+j*9)%80
+  (i+j*29)%80
 end
 
-innercode = (hanabi_code+';'+' '*10000).chars.each_slice(80).take(39-12).map(&:join)+(['-'*80]*12).map(&:dup)
+innercode = (hanabi_code+';'+' '*10000).chars.each_slice(80).take(39-FIXES).map(&:join)+(['-'*80]*FIXES).map(&:dup)
 p spaces: innercode.join.count(' ')
 
 outs = []
 80.times { |i|
   s = (0...39).map { innercode[39-1-_1][coord(i, _1)] } * ''
-  inflated = rsobj.inflate(s[12..].tr('{|}~', '"#!\\')).tr('"#!\\', '{|}~')
+  inflated = rsobj.inflate(s[FIXES..].tr('{|}~', '"#!\\')).tr('"#!\\', '{|}~')
   outs << inflated
   (0...39).each { innercode[39-1-_1][coord(i, _1)] = inflated[_1] }
 }
-eval_code = "eval$z[0,#{39-12}].map{_1[10,80].split}*''"
+eval_code = "eval$z[0,#{39-FIXES}].map{_1[10,80].split}*''"
 side_code_chars = [rs_code, expand_code, eval_code].join(';').chars
 zwas = innercode.map{'▄'*10+_1+'▄'*10}
 zwas[-1][-2,2] = '`]'
 zwas=zwas.map { _1.gsub(/▄/) { side_code_chars.shift || ';' } }.join("\n").lines
 $z = zwas.map(&:dup)
-# puts zwas
 p side_code_chars.size
-
 200.times{
   line = $z.sample
   line[rand(10...10+80)] = '█'
 }
 puts
-# puts $z
 restored = eval rs_code+';'+expand_code
-# eval_code = "eval($z.map{_1[10,80].delete(32.chr)}.take(39-12)*'')"
-# eval [rs_code, expand_code, eval_code].join(';')
 puts
 puts $z
 puts zwas == $z
